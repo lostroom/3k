@@ -12,90 +12,113 @@ from .models import Play
 from django.http import HttpResponseRedirect
 from .forms import UploadFileForm
 
-from .scripts import calculate_phone_graph as gh
+from .scripts import calculate_phone_graph
+from .scripts import calculate_org_graph as cog
+from .scripts import calculate_post_graph as cpg
+import os
+import datetime
+
+#получение даты последнего измениния файла
+def modification_date(filename):
+    t = os.path.getmtime(filename)
+    return datetime.datetime.fromtimestamp(t)
 
 @login_required
-def graph(request):
-    return render(request, 'blog/graph.html')
+def start_page(request):
+    return render(request, 'blog/index.html')
 
-@login_required
-def play_count_by_month(request):
-    data = Play.objects.all() \
-        .extra(select={'month': connections[Play.objects.db].ops.date_trunc_sql('month', 'date')}) \
-        .values('month') \
-        .annotate(count_items=Count('id'))
-    return JsonResponse(list(data), safe=False)
+def handle_uploaded_org_struct(f):
+    with open('blog/media/downloads/org_struct.csv', 'wb+') as destination:
+        for chunk in f.chunks():\
+            destination.write(chunk)
 
-@login_required
-def post_list(request):
-    posts = Post.objects.filter(published_date__lte=timezone.now()).order_by('published_date')
-    return render(request, 'blog/post_list.html', {'posts': posts})
-
-@login_required
-def post_detail(request, pk):
-    post = get_object_or_404(Post, pk=pk)
-    return render(request, 'blog/post_detail.html', {'post': post})
-
-@login_required
-def post_new(request):
-    if request.method == "POST":
-        form = PostForm(request.POST)
-        if form.is_valid():
-            post = form.save(commit=False)
-            post.author = request.user
-            post.published_date = timezone.now()
-            post.save()
-            return redirect('post_detail', pk=post.pk)
-    else:
-        form = PostForm()
-    return render(request, 'blog/post_edit.html', {'form': form})
-
-def handle_uploaded_file(f):
-    with open('blog/downloads/name.txt', 'wb+') as destination:
+def handle_uploaded_workers_info(f):
+    with open('blog/media/downloads/workers_info.csv', 'wb+') as destination:
         for chunk in f.chunks():\
             destination.write(chunk)
 
 def handle_uploaded_phone_log(f):
-    with open('blog/downloads/phone_log.csv', 'wb+') as destination:
+    with open('blog/media/downloads/phone_log.csv', 'wb+') as destination:
+        for chunk in f.chunks():\
+            destination.write(chunk)
+
+def handle_uploaded_post_log(f):
+    with open('blog/media/downloads/post_log.csv', 'wb+') as destination:
         for chunk in f.chunks():\
             destination.write(chunk)
 
 @login_required
 def upload_org_struct(request):
+
+    lastup = modification_date('blog/media/downloads/org_struct.csv')
     if request.method == 'POST':
         form = UploadFileForm(request.POST, request.FILES)
         if form.is_valid():
-            handle_uploaded_file(request.FILES['docfile'])
-            return HttpResponseRedirect('success/')
+            handle_uploaded_org_struct(request.FILES['docfile'])
+            return render(request, 'blog/upload_org_struct.html', {'form': form, 'lastup' : lastup})
     else:
         form = UploadFileForm()
-    return render(request, 'blog/upload_org_struct.html', {'form': form})
+    return render(request, 'blog/upload_org_struct.html', {'form': form, 'lastup' : lastup})
 
 @login_required
-def success_upload_org_struct(request):
-    return render(request, 'blog/success_upload_org_struct.html')
+def upload_worker_info(request):
+
+    lastup = modification_date('blog/media/downloads/workers_info.csv')
+    if request.method == 'POST':
+        form = UploadFileForm(request.POST, request.FILES)
+        if form.is_valid():
+            handle_uploaded_workers_info(request.FILES['docfile'])
+            return render(request, 'blog/upload_workers_info.html', {'form': form, 'lastup' : lastup})
+    else:
+        form = UploadFileForm()
+    return render(request, 'blog/upload_workers_info.html', {'form': form, 'lastup' : lastup})
+
 
 @login_required
 def upload_phone_log(request):
+
+    lastup = modification_date('blog/media/downloads/phone_log.csv')
     if request.method == 'POST':
         form = UploadFileForm(request.POST, request.FILES)
         if form.is_valid():
             handle_uploaded_phone_log(request.FILES['docfile'])
-            return HttpResponseRedirect('success/')
+            return render(request, 'blog/upload_phone_log.html', {'form': form, 'lastup' : lastup})
     else:
         form = UploadFileForm()
-    return render(request, 'blog/upload_phone_log.html', {'form': form})
+    return render(request, 'blog/upload_phone_log.html', {'form': form, 'lastup' : lastup})
 
 @login_required
-def success_upload_phone_log(request):
-    return render(request, 'blog/success_upload_phone_log.html')
+def upload_post_log(request):
+
+    lastup = modification_date('blog/media/downloads/post_log.csv')
+    if request.method == 'POST':
+        form = UploadFileForm(request.POST, request.FILES)
+        if form.is_valid():
+            handle_uploaded_post_log(request.FILES['docfile'])
+            return render(request, 'blog/upload_post_log.html', {'form': form, 'lastup' : lastup})
+    else:
+        form = UploadFileForm()
+    return render(request, 'blog/upload_post_log.html', {'form': form, 'lastup' : lastup})
 
 @login_required
 def phone_graph(request):
     return render(request, 'blog/phone_graph.html')
 
+@login_required
+def org_struct_graph(request):
+    return render(request, 'blog/org_graph.html')
 
 @login_required
 def create_phone_json(request):
-        gh.main()
+        calculate_phone_graph.main()
         return HttpResponseRedirect('/graph/phone_graph/')
+
+@login_required
+def create_org_json(request):
+        cog.main()
+        return HttpResponseRedirect('/graph/org_graph/')
+
+@login_required
+def create_post_json(request):
+        cpg.main()
+        return HttpResponseRedirect('/graph/post_graph/')

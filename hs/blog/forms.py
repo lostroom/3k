@@ -10,8 +10,6 @@ class PostForm(forms.ModelForm):
 
 class UploadFileForm(forms.Form):
     docfile = forms.FileField(
-        label='Select a file',
-        help_text='max. 42 megabytes',
-
+        label='Выберите файл'
     )
     docfile.widget.attrs.update({'class' : 'form-control-file'})

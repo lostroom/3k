@@ -5,7 +5,7 @@
 <script type="text/javascript" src="{% static 'webix/codebase/webix.js' %}"></script>
 <link href="{% static 'webix/codebase/webix.css' %}" rel="stylesheet">
 
-<h2>Здесь можно загрузить логи телефонии в формате csv</h2>
+<h2>Здесь можно загрузить почтовые логи в формате csv</h2>
 <hr>
 
 <div class="container">
@@ -26,7 +26,7 @@
           <br>
           нажмите, чтобы создать файл со связями
           <div>
-            <form style="padding: 10px"  action="/graph/phone_graph/calcucate/" method="GET">
+            <form style="padding: 10px"  action="/graph/post_graph/calcucate/" method="GET">
                 <button type="submit" class="btn btn-primary">Сгенерировать</button>
             </form>
           </div>
@@ -46,16 +46,14 @@
         container:"testA",
 				view:"datatable",
 				columns:[
-          { id:"data0",   header:"id", sort:"int"},
-					{ id:"data1",	header:"from", width:250},
-					{ id:"data2",	header:"to" , width:300},
-					{ id:"data3",	header:"duration", 	width:100},
-          { id:"data4",	header:"time", 	width:120},
-          { id:"data5",	header:"date", 	width:120},
+          { id:"data0", header:"id", width:50},
+					{ id:"data1",	header:"from", width:50},
+					{ id:"data2",	header:"to" , width:50},
+					{ id:"data3",	header:"theme", 	width:150},
+          { id:"data4",	header:"text", 	width:500},
+          { id:"data5",	header:"date", 	width:100},
+          { id:"data6",	header:"time", 	width:100},
 				],
-        scheme:{
-        $init:function(obj){ obj.index = this.count(); }
-        },
         select:"row",
 				autowidth:true,
 				yCount:6, scrollY:false,
@@ -68,7 +66,7 @@
 				},
 
 				datatype:"csv",
-				url:'/media/downloads/phone_log.csv'
+				url:'/media/downloads/post_log.csv'
 			   });
       });
 </script>

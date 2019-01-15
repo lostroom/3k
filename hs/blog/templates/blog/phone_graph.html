@@ -5,9 +5,8 @@
 <div id="networkJSON-results" class="results" style="display:none"></div>
 <style type="text/css">
         #mynetwork {
-            width: 900px;
-            height: 900px;
-            border: 1px solid lightgray;
+            width: 700px;
+            height: 500px;
         }
 </style>
 
@@ -15,12 +14,18 @@
 <script type="text/javascript" src="{% static 'js/require.js' %}"></script>
 <link href="{% static 'css/vis-network.min.css' %}" rel="stylesheet" type="text/css"/>
 
-<p>
-    Relations between the characters of "Les miserables".
-</p>
-
-<div id="mynetwork"></div>
-
+<h2>Граф телефонных связей</h2>
+<hr>
+<div class="container">
+  <div class="row">
+      <div class="col-md-8" style="border: 1px solid black">
+        <div id="mynetwork"></div>
+      </div>
+      <div class="col-md-4" style="border: 1px solid blue">
+        <div id="eventSpan"></div>
+      </div>
+  </div>
+</div>
 <script type="text/javascript">
         var options = {
             nodes: {
@@ -42,17 +47,27 @@
         };
 
         console.log("olo");
-        var json = $.getJSON("{% static 'jsons/data.json' %}")
+        var json = $.getJSON("{% static 'jsons/phone_graph.json' %}")
         .done(function(data){
-        var data = {
-          nodes: data.nodes,
-          edges: data.edges
-        };
+          var nodes = new vis.DataSet(data.nodes);
+          var edges = new vis.DataSet(data.edges);
+          var data = {nodes: nodes, edges: edges};
         console.log("olo");
         var network = new vis.Network(container, data, options);
+        network.on( 'click', function(properties) {
+            var ids = properties.nodes;
+            var clickedNodes = nodes.get(ids);
+            var info =  clickedNodes[0]['data'];
+            document.getElementById('eventSpan').innerHTML = '<h2>Click event:</h2>' + info;
         });
 
-    var container = document.getElementById('mynetwork');
+        });
+
+
+        var container = document.getElementById('mynetwork');
+
+
+
     </script>
 
 

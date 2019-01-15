@@ -120,8 +120,8 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
-LOGIN_REDIRECT_URL = 'post_list'
-LOGOUT_REDIRECT_URL = 'post_list'
+LOGIN_REDIRECT_URL = 'start_page'
+LOGOUT_REDIRECT_URL = 'start_page'
 
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'blog/media')
 MEDIA_URL = '/media/'

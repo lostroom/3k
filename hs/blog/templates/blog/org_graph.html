@@ -1,0 +1,87 @@
+{% extends 'blog/base.html' %}
+
+{% block content %}
+{% load static %}
+<div id="networkJSON-results" class="results" style="display:none"></div>
+<style type="text/css">
+        #mynetwork {
+            width: 900px;
+            height: 900px;
+            border: 1px solid lightgray;
+        }
+</style>
+
+<script type="text/javascript" src="{% static 'js/vis.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/require.js' %}"></script>
+<link href="{% static 'css/vis-network.min.css' %}" rel="stylesheet" type="text/css"/>
+
+<p>
+    Граф организационной структуры
+</p>
+<div id="eventSpan"></div>
+<div id="mynetwork"></div>
+
+<script type="text/javascript">
+          var options = {
+          layout: {
+              hierarchical: {
+                  direction: "DU",
+                  sortMethod: "directed",
+                  nodeSpacing: 300
+              }
+          },
+          interaction: {dragNodes :false},
+          physics: {
+              enabled: false
+          },
+          nodes: {
+            shape: "box",
+            font: {
+              size: 8
+            }
+          },
+
+          configure: {
+            filter: function (option, path) {
+                if (path.indexOf('hierarchical') !== -1) {
+                    return true;
+                }
+                return false;
+            },
+            showButton:false
+          }
+        };
+
+
+
+
+
+        console.log("olo");
+        var json = $.getJSON("{% static 'jsons/org_struct_graph.json' %}")
+        .done(function(data){
+        nodes = new vis.DataSet(data.nodes);
+        edges = new vis.DataSet(data.edges);
+        var data = {
+          nodes: nodes,
+          edges: edges
+        };
+        console.log("olo");
+        var network = new vis.Network(container, data, options);
+        network.on( 'click', function(properties) {
+            var ids = properties.nodes;
+            var clickedNodes = nodes.get(ids);
+            console.log('clicked nodes:', clickedNodes);
+        });
+        });
+
+
+
+    var container = document.getElementById('mynetwork');
+
+
+
+    </script>
+
+
+
+{% endblock %}
