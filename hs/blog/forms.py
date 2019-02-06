@@ -1,12 +1,20 @@
 from django import forms
 
-from .models import Post
+from .models import Worker
 
-class PostForm(forms.ModelForm):
+from django_select2.forms import Select2Widget
+
+class MyForm(forms.Form):
+    #worker = forms.ModelChoiceField(queryset=Worker.objects.all())
+    choose_1st_fighter = forms.ModelChoiceField(queryset=Worker.objects.all(), label='First worker')
+    choose_2st_fighter = forms.ModelChoiceField(queryset=Worker.objects.all(), label='Second worker')
+    choose_1st_fighter.widget.attrs.update({'class' : 'form-control'})
+    choose_2st_fighter.widget.attrs.update({'class' : 'form-control'})
 
     class Meta:
-        model = Post
-        fields = ('title', 'text',)
+        model = Worker
+        fields = ['choose_1st_fighter', 'choose_2st_fighter']
+
 
 class UploadFileForm(forms.Form):
     docfile = forms.FileField(

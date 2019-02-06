@@ -2,22 +2,22 @@ from django.db import models
 from django.utils import timezone
 
 
-class Post(models.Model):
-    author = models.ForeignKey('auth.User', on_delete=models.CASCADE)
-    title = models.CharField(max_length=200)
-    text = models.TextField()
-    created_date = models.DateTimeField(
-            default=timezone.now)
-    published_date = models.DateTimeField(
-            blank=True, null=True)
-
-    def publish(self):
-        self.published_date = timezone.now()
-        self.save()
+class Worker(models.Model):
+    tabnum = models.IntegerField(primary_key=True)
+    fio = models.CharField(max_length=50)
+    gender = models.TextField()
+    birthdate  = models.TextField()
+    photo_id  = models.TextField(null=True)
 
     def __str__(self):
-        return self.title
+        return self.fio
 
-class Play(models.Model):
-    name = models.CharField(max_length=100)
-    date = models.DateTimeField()
+class Call(models.Model):
+    call_from = models.ForeignKey(Worker, on_delete=models.CASCADE, related_name="call_from")
+    call_to = models.ForeignKey(Worker, on_delete=models.CASCADE, related_name="call_to")
+    call_duration = models.IntegerField()
+    call_time = models.TimeField()
+    call_date = models.DateField()
+
+    def __str__(self):
+        return str(self.call_from) + '_to_' + str(self.call_to) + '|' + str(self.call_date) + ':' + str(self.call_time)

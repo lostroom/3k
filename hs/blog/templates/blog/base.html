@@ -33,7 +33,7 @@
         <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
         <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
-
+    {{ form.media.css }}
 </head>
 
 <body>
@@ -85,6 +85,9 @@
                                     <a href="{% url 'upload_worker_info' %}">Список сотрудников</a>
                                 </li>
                                 <li>
+                                    <a href="{% url 'upload_worker_job_history' %}">История работы</a>
+                                </li>
+                                <li>
                                     <a href="{% url 'upload_org_struct' %}">Орг структура</a>
                                 </li>
                                 <li>
@@ -92,6 +95,9 @@
                                 </li>
                                 <li>
                                     <a href="{% url 'upload_post_log' %}">Почтовые логи</a>
+                                </li>
+                                <li>
+                                    <a href="{% url 'upload_skud_log' %}">Логи СКД</a>
                                 </li>
                             </ul>
                         </li>
@@ -102,7 +108,10 @@
                                     <a href="{% url 'org_struct_graph' %}">Граф орг структуры</a>
                                 </li>
                                 <li>
-                                    <a href="{% url 'phone_graph' %}">Граф телефонии</a>
+                                    <a href="{% url 'connect_graph' %}">Граф связей</a>
+                                </li>
+                                <li>
+                                    <a href="{% url 'check_connect' %}">Поиск связей</a>
                                 </li>
                             </ul>
                             <!-- /.nav-second-level -->
@@ -143,7 +152,12 @@
 
     <!-- Custom Theme JavaScript -->
     <script src="{% static 'temp_el/admin/sb-admin-2.js' %}"></script>
-
+    <script type="text/javascript">
+        window.onerror = function (msg) {
+          $("body").attr("JSError", msg);
+        }
+      </script>
+    {{ form.media.js }}
 </body>
 
 </html>

@@ -5,7 +5,7 @@
 <script type="text/javascript" src="{% static 'webix/codebase/webix.js' %}"></script>
 <link href="{% static 'webix/codebase/webix.css' %}" rel="stylesheet">
 
-<h2>Здесь можно загрузить данные об организационной структуре в формате csv</h2>
+<h2>Здесь можно загрузить данные о трудовой истории сотрудников в формате csv</h2>
 <hr>
 
 <div class="container">
@@ -26,7 +26,7 @@
           <br>
           нажмите, чтобы создать файл со связями
           <div>
-            <form style="padding: 10px"  action="/graph/org_graph/calcucate/" method="GET">
+            <form style="padding: 10px"  action="#" method="GET">
                 <button type="submit" class="btn btn-primary">Сгенерировать</button>
             </form>
           </div>
@@ -40,19 +40,18 @@
 <div id="testA"></div>
 <div id="paging_here"></div>
 <script>
-  
   webix.ready(function(){
       webix.DataDriver.csv.cell = ";";
 			grida = webix.ui({
         container:"testA",
 				view:"datatable",
 				columns:[
-          { id:"data0",	header:"id",width:100},
+          { id:"data0",	header:"id",width:50},
           { id:"data1",	header:"tabnum",width:100},
-					{ id:"data2",	header:"fio",width:250},
-					{ id:"data3",	header:"position" , width:300},
-					{ id:"data4",	header:"boss_id", 	width:100},
-          { id:"data5",	header:"division", 	width:120},
+          { id:"data2",	header:"org",width:100},
+					{ id:"data3",	header:"date_start",width:100},
+					{ id:"data4",	header:"date_end" , width:100},
+					{ id:"data5",	header:"position", 	width:100}
 				],
         select:"row",
 				autowidth:true,
@@ -62,11 +61,11 @@
 				pager:{
 					container:"paging_here",
 					size:6,
-					group:4
+					group:5
 				},
 
 				datatype:"csv",
-				url:'/media/downloads/org_struct.csv'
+				url:'/media/downloads/workers_job_history.csv'
 			   });
       });
 </script>

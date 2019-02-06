@@ -1,0 +1,60 @@
+{% extends 'blog/base.html' %}
+{% load static %}
+
+{% block content %}
+<div id="networkJSON-results" class="results" style="display:none"></div>
+<style type="text/css">
+        #mynetwork {
+            width: 700px;
+            height: 500px;
+        }
+</style>
+
+
+<link href="{% static 'css/vis-network.min.css' %}" rel="stylesheet" type="text/css"/>
+
+<h2>Поиск связей</h2>
+<hr>
+<div class="container">
+  <div class="row">
+    <div class="col-md-12" style="border: 1px solid black; text-align: center; padding-top: 5px;">
+      <form action="/check_connect/" method="post" class="form-inline">
+        <div class="form-group">
+        {% csrf_token %}
+        {{ form.choose_1st_fighter }}
+        {{ form.choose_2st_fighter }}
+        </div>
+        <input type="submit" value="Анализ связей" class="btn btn-primary">
+      </form>
+    </div>
+  </div>
+  <div class="row">
+      <div class="col-md-6" style="border: 1px solid black; padding-top: 5px;">
+        <div id="first" style="height: 250px;">
+            {% if fio1 %}
+                <img src="../../media/photos/{{photo_1}}" class="rounded float-left" alt="..." style="width: 200px; height: 200px;">
+                Выбран сотрудник: {{ fio1 }}
+            {% else %}
+                Выберите сотрудника.
+            {% endif %}
+        </div>
+      </div>
+      <div class="col-md-6" style="border: 1px solid blue; padding-top: 5px;">
+        <div id="second" style="height: 250px;">
+          {% if fio2 %}
+              <img src="../../media/photos/{{photo_2}}" class="rounded float-left" alt="..." style="width: 200px; height: 200px;">
+              Выбран сотрудник: {{ fio2 }}
+          {% else %}
+              Выберите сотрудника.
+          {% endif %}
+        </div>
+      </div>
+      <div class="col-md-12" style="border: 1px solid blue; height: 400px; padding-top: 5px;">
+      </div>
+  </div>
+</div>
+
+
+
+
+{% endblock %}
