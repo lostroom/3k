@@ -3,15 +3,12 @@
 
 {% block content %}
 <div id="networkJSON-results" class="results" style="display:none"></div>
-<style type="text/css">
-        #mynetwork {
-            width: 700px;
-            height: 500px;
-        }
-</style>
 
-
-<link href="{% static 'css/vis-network.min.css' %}" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="{% static 'highcharts/code/highcharts.js' %}"></script>
+<script type="text/javascript" src="{% static 'highcharts/code/modules/series-label.js' %}"></script>
+<script type="text/javascript" src="{% static 'highcharts/code/modules/exporting.js' %}"></script>
+<script type="text/javascript" src="{% static 'highcharts/code/modules/export-data.js' %}"></script>
+<script type="text/javascript" src="{% static 'highcharts/code/modules/bullet.js' %}"></script>
 
 <h2>Поиск связей</h2>
 <hr>
@@ -49,11 +46,282 @@
           {% endif %}
         </div>
       </div>
-      <div class="col-md-12" style="border: 1px solid blue; height: 400px; padding-top: 5px;">
+      <div class="col-md-8" style="border: 1px solid blue; height: 400px; padding-top: 5px;">
+        <div id="chart1" style="height: 350px; "></div>
+      </div>
+      <div class="col-md-4" style="border: 1px solid blue; height: 400px; padding-top: 5px;">
+        <div id="chart2" style="height: 120px; border: 1px solid blue;"></div>
+        <div id="chart3" style="height: 120px; border: 1px solid blue;"></div>
+        <div id="chart4" style="height: 120px; border: 1px solid blue;"></div>
       </div>
   </div>
 </div>
+<script type="text/javascript">
 
+var c1 = Highcharts.chart('chart1', {
+
+    chart: {
+              zoomType: 'x',
+              type: 'area'
+          },
+    title: {
+        text: 'Total duration of calls by day'
+    },
+
+    subtitle: {
+        text: 'include input and output calls'
+    },
+    xAxis: {
+                type: 'datetime'
+            },
+
+    yAxis: {
+      min: 0,
+        title: {
+            text: 'Number of Employees'
+        }
+    },
+
+    plotOptions: {
+      area: {
+            fillColor: {
+                linearGradient: {
+                    x1: 0,
+                    y1: 0,
+                    x2: 0,
+                    y2: 1
+                },
+                stops: [
+                    [0, Highcharts.getOptions().colors[0]],
+                    [1, Highcharts.Color(Highcharts.getOptions().colors[0]).setOpacity(0).get('rgba')]
+                ]
+            },
+            marker: {
+                radius: 2
+            },
+            lineWidth: 1,
+            states: {
+                hover: {
+                    lineWidth: 1
+                }
+            },
+            threshold: null
+              },
+        series: {
+            type: 'area',
+            label: {
+                connectorAllowed: false
+            }
+        }
+    },
+
+    series: [{
+        name: 'Installation',
+        data: [
+        {% for i in test_list %}{{i}}{% if not forloop.last %},{% endif %}{% endfor %}
+        ]
+    }],
+    legend: {
+      enabled: false
+    },
+    responsive: {
+        rules: [{
+            condition: {
+                maxWidth: 500
+            },
+            chartOptions: {
+                legend: {
+                    enabled: false
+                }
+            }
+        }]
+    }
+
+});
+var c2 = Highcharts.chart('chart2', {
+
+      chart: {
+          marginTop: 40,
+          inverted: true,
+          marginLeft: 10,
+          type: 'bullet'
+      },
+      title: {
+          text: 'total duration'
+      },
+      legend: {
+        enabled: false
+      },
+      xAxis: {
+          categories: ['<span class="hc-cat-title">total duration</span><br/>']
+      },
+      yAxis: {
+          gridLineWidth: 0,
+          plotBands: [{
+              from: 0,
+              to: 900,
+              color: '#66ffcc'
+          }, {
+              from: 900,
+              to: 3600,
+              color: '#66ff99'
+          }, {
+              from: 3600,
+              to: 9e9,
+              color: '#66ff00'
+          }],
+          title: 'total duration'
+
+      },
+      plotOptions: {
+        series: {
+            pointPadding: 0.25,
+            borderWidth: 0,
+            color: '#6699ff',
+            targetOptions: {
+                width: '0%'
+            }
+        }
+    },
+    credits: {
+        enabled: false
+    },
+    exporting: {
+        enabled: false
+    },
+      series: [{
+          data: [{
+              y: {{total_duration}},
+              target: 3600
+          }]
+      }],
+      tooltip: {
+          pointFormat: '<b>{point.y}</b> (with target at {point.target})'
+      }
+  });
+var c3 = Highcharts.chart('chart3', {
+
+        chart: {
+            marginTop: 40,
+            inverted: true,
+            marginLeft: 10,
+            type: 'bullet'
+        },
+        title: {
+            text: 'avg duration'
+        },
+        legend: {
+          enabled: false
+        },
+        xAxis: {
+            categories: ['<span class="hc-cat-title">Revenue</span><br/>U.S. $ (1,000s)']
+        },
+        yAxis: {
+            gridLineWidth: 0,
+            plotBands: [{
+                from: 0,
+                to: 30,
+                color: '#66ffcc'
+            }, {
+                from: 30,
+                to: 120,
+                color: '#66ff99'
+            }, {
+                from: 120,
+                to: 9e9,
+                color: '#66ff00'
+            }],
+            title: null
+
+        },
+        plotOptions: {
+          series: {
+              pointPadding: 0.25,
+              borderWidth: 0,
+              color: '#6699ff',
+              targetOptions: {
+                  width: '100%'
+              }
+          }
+      },
+      credits: {
+          enabled: false
+      },
+      exporting: {
+          enabled: false
+      },
+        series: [{
+            data: [{
+                y: {{avg_duration}},
+                target: 120
+            }]
+        }],
+        tooltip: {
+            pointFormat: '<b>{point.y}</b> (with target at {point.target})'
+        }
+    });
+var c4 = Highcharts.chart('chart4', {
+
+            chart: {
+                marginTop: 40,
+                inverted: true,
+                marginLeft: 10,
+                type: 'bullet'
+            },
+            title: {
+                text: 'avg calls by day'
+            },
+            legend: {
+              enabled: false
+            },
+            xAxis: {
+                categories: ['<span class="hc-cat-title">Revenue</span><br/>U.S. $ (1,000s)']
+            },
+            yAxis: {
+                gridLineWidth: 0,
+                plotBands: [{
+                    from: 0,
+                    to: 0.1,
+                    color: '#66ffcc'
+                }, {
+                    from: 0.1,
+                    to: 0.4,
+                    color: '#66ff99'
+                }, {
+                    from: 0.4,
+                    to: 9e9,
+                    color: '#66ff66'
+                }],
+                title: null
+
+            },
+            plotOptions: {
+              series: {
+                  pointPadding: 0.25,
+                  borderWidth: 0,
+                  color: '#6699ff',
+                  targetOptions: {
+                      width: '0%'
+                  }
+              }
+          },
+          credits: {
+              enabled: false
+          },
+          exporting: {
+              enabled: false
+          },
+            series: [{
+                data: [{
+                    y: {{day_calls}},
+                    target: 0.4
+                }]
+            }],
+            tooltip: {
+                pointFormat: '<b>{point.y}</b> (with target at {point.target})'
+            }
+        });
+		</script>
 
 
 

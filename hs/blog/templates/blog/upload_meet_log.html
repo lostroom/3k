@@ -1,0 +1,77 @@
+{% extends 'blog/base.html' %}
+
+{% block content %}
+{% load static %}
+<script type="text/javascript" src="{% static 'webix/codebase/webix.js' %}"></script>
+<link href="{% static 'webix/codebase/webix.css' %}" rel="stylesheet">
+
+<h2>Здесь можно загрузить логи встреч в формате csv</h2>
+<hr>
+
+<div class="container">
+  <div class="row">
+      <div class="col-md-4" style="border: 1px solid black">
+        <div style="height: 150px; width: 300px">
+          <div>
+              <form style="padding: 10px" class="form-group" method="POST" enctype="multipart/form-data">{% csrf_token %}
+                  {{ form.as_p }}
+                  <button type="submit" class="btn btn-primary">Сохранить</button>
+              </form>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4" style="border: 1px solid blue">
+        <div style="padding: 10px; height: 150px; width: 300px">
+          <b>создание расчетных таблиц</b>
+          <br>
+          нажмите, чтобы обработать данные
+          <div>
+            <form style="padding: 10px"  action="#" method="GET">
+                <button type="submit" class="btn btn-primary">Анализ</button>
+            </form>
+          </div>
+        </div>
+      </div>
+  </div>
+</div>
+
+<hr>
+<h3>Загруженные данные</h3><h5>(обновлено {{lastup}})</h5>
+<div id="testA"></div>
+<div id="paging_here"></div>
+<script>
+  webix.ready(function(){
+      webix.DataDriver.csv.cell = ";";
+			grida = webix.ui({
+        container:"testA",
+				view:"datatable",
+				columns:[
+          { id:"data0", header:"id", sort:"int", width:30},
+					{ id:"data1",	header:"meet_id", width:70},
+					{ id:"data2",	header:"participant" , width:40},
+					{ id:"data3",	header:"theme", 	width:200},
+          { id:"data4",	header:"subject", 	width:300},
+          { id:"data5",	header:"date", 	width:120},
+          { id:"data6",	header:"time", 	width:120},
+				],
+        scheme:{
+        $init:function(obj){ obj.index = this.count(); }
+        },
+        select:"row",
+				autowidth:true,
+				yCount:6, scrollY:false,
+				navigation:"true",
+
+				pager:{
+					container:"paging_here",
+					size:6,
+					group:4
+				},
+
+				datatype:"csv",
+				url:'/media/downloads/meet_log.csv'
+			   });
+      });
+</script>
+
+{% endblock %}

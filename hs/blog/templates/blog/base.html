@@ -1,5 +1,5 @@
 {% load static %}
-
+{% load staticfiles %}
 <html lang="en">
 <head>
 
@@ -10,6 +10,8 @@
     <meta name="author" content="">
 
     <title>Handshakes Pro v 0.1</title>
+
+    <link rel="shortcut icon" href="{%  static 'favicon.ico' %}">
 
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
 
@@ -85,20 +87,27 @@
                                     <a href="{% url 'upload_worker_info' %}">Список сотрудников</a>
                                 </li>
                                 <li>
-                                    <a href="{% url 'upload_worker_job_history' %}">История работы</a>
-                                </li>
-                                <li>
-                                    <a href="{% url 'upload_org_struct' %}">Орг структура</a>
-                                </li>
-                                <li>
                                     <a href="{% url 'upload_phone_log' %}">Логи телефонии</a>
                                 </li>
                                 <li>
                                     <a href="{% url 'upload_post_log' %}">Почтовые логи</a>
                                 </li>
                                 <li>
+                                    <a href="{% url 'upload_meet_log' %}">Логи встреч</a>
+                                </li>
+                                <li>
+                                    <a href="{% url 'action_buttons' %}">Обработчики</a>
+                                </li>
+                                <!--<li>
                                     <a href="{% url 'upload_skud_log' %}">Логи СКД</a>
                                 </li>
+
+                                <li>
+                                    <a href="{% url 'upload_worker_job_history' %}">История работы</a>
+                                </li>
+                                <li>
+                                    <a href="{% url 'upload_org_struct' %}">Орг структура</a>
+                                </li>-->
                             </ul>
                         </li>
                         <li>

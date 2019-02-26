@@ -8,6 +8,12 @@
             width: 700px;
             height: 500px;
         }
+        .table-wrapper-scroll-y {
+          display: block;
+          max-height: 400px;
+          overflow-y: auto;
+          -ms-overflow-style: -ms-autohiding-scrollbar;
+        }
 </style>
 
 <script type="text/javascript" src="{% static 'js/vis.js' %}"></script>
@@ -27,13 +33,42 @@
   </div>
 </div>
 <script type="text/javascript">
+        function makeTableHTML(myArray, list_nodes, node_id) {
+          var result = "<div class=\"table-wrapper-scroll-y\"><table class=\"table table-dark\"><thead><tr><th scope=\"col\">#</th><th scope=\"col\">To</th><th scope=\"col\">Score</th></tr></thead></div>";
+          for(var i=0; i<myArray.length; i++) {
+            if (node_id == myArray[i]['from'])
+            {
+            var item1 = list_nodes.get(myArray[i]['to']);
+            }
+            else
+            {
+            var item1 = list_nodes.get(myArray[i]['from']);
+            };
+            result += "<tr>";
+                result += "<th scope=\"row\">"+(i+1)+"</th>"+"<td>"+item1['label']+"</td>"+"<td>"+myArray[i]['data']+"</td>";
+            result += "</tr>";
+          }
+          result += "</table>";
+
+          return result;
+        };
         var options = {
             nodes: {
                 shape: 'dot',
-                size: 16
+                size: 20,
+                font: {
+                  size: 6,
+                  strokeWidth: 3
+                }
             },
             physics: {
-                enabled: false
+                enabled: true,
+                maxVelocity: 5,
+                minVelocity: 0.1,
+                forceAtlas2Based: {
+                    springLength: 500,
+                    avoidOverlap: 1
+                }
             },
         };
 
@@ -43,14 +78,24 @@
           var nodes = new vis.DataSet(data.nodes);
           var edges = new vis.DataSet(data.edges);
           var data = {nodes: nodes, edges: edges};
-        console.log("olo");
+
         var network = new vis.Network(container, data, options);
 
         network.on( 'click', function(properties) {
-            var ids = properties.nodes;
-            var clickedNodes = nodes.get(ids);
-            var info =  clickedNodes[0]['data'];
-            document.getElementById('eventSpan').innerHTML = '<h2>Click event:</h2>' + info;
+            var nodes_ids = properties.nodes;
+            var clickedNodes = nodes.get(nodes_ids);
+            var edges_ids = properties.edges;
+            var clickedEdges = edges.get(edges_ids);
+            var info = 'choose something';
+            if (typeof clickedNodes !== 'undefined' && clickedNodes.length > 0)
+            {
+              info =  makeTableHTML(clickedEdges, nodes, nodes_ids);
+            }
+            else if (typeof clickedEdges !== 'undefined' && clickedEdges.length > 0)
+            {
+              info =  clickedEdges[0]['data'];
+            }
+            document.getElementById('eventSpan').innerHTML = '<h2>Связи:</h2><hr>' + info;
         });
 
         });
